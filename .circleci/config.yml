@@ -1,0 +1,78 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5
+
+jobs:
+  linting_test:
+    executor: node/default
+    description: "Linting test"
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Linting test
+          command: npm run lint:fix
+  run_tests:
+    executor: node/default
+    description: "Test code"
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Test code
+          command: npm run test
+  build:
+    executor: node/default
+    description: "Build"
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Build
+          command: npm run build
+  run_release:
+    executor: node/default
+    description: "Run release"
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Setup git credentials
+          command: |
+            git config --global user.email $GIT_EMAIL
+            git config --global user.name $GIT_NAME
+      - run:
+          name: Run release
+          command: npm run release
+  publish_to_npm:
+    executor: node/default
+    description: "Publish to NPM"
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Login to NPM
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+      - run:
+          name: Publish to NPM
+          command: npm publish
+          environment:
+            NPM_TOKEN: $NPM_TOKEN
+
+workflows:
+  build_app:
+    jobs:
+      - linting_test
+      - run_tests:
+          requires:
+            - linting_test
+      - build:
+          requires:
+            - run_tests
+      - run_release:
+          requires:
+            - build
+      - publish_to_npm:
+          requires:
+            - run_release
