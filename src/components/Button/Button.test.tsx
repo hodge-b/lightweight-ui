@@ -4,7 +4,7 @@ import Button from "./Button";
 
 describe("Button", () => {
   it("Renders the Button component", () => {
-    const { container } = render(<Button className="test-buttons" />);
-    expect(container.firstChild).toHaveClass("test-buttons");
+    const { container } = render(<Button className="test-button" />);
+    expect(container.firstChild).toHaveClass("test-button");
   });
 });
