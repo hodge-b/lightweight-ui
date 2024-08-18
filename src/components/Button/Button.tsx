@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { ButtonProps } from "./Button.types";
+import { type ReactNode } from "react";
+import { type ButtonProps } from "./Button.types";
 
 const Button = (props: ButtonProps): ReactNode => {
   const { className } = props;
